@@ -14,7 +14,7 @@ public sealed class MainViewModel : ViewModelBase, IAsyncDisposable
     private readonly SystemClock clock;
     private readonly SettingsStore settingsStore;
     private readonly UploadLogStore uploadLogStore;
-    private readonly ProtectedFileStore protectedFileStore;
+    private readonly IProtectedFileStore protectedFileStore;
     private readonly AuthService authService;
     private readonly BackendApiClient backendApiClient;
     private readonly UploadService uploadService;
@@ -43,7 +43,7 @@ public sealed class MainViewModel : ViewModelBase, IAsyncDisposable
         SystemClock clock,
         SettingsStore settingsStore,
         UploadLogStore uploadLogStore,
-        ProtectedFileStore protectedFileStore,
+        IProtectedFileStore protectedFileStore,
         AuthService authService,
         BackendApiClient backendApiClient,
         UploadService uploadService,
@@ -253,12 +253,12 @@ public sealed class MainViewModel : ViewModelBase, IAsyncDisposable
         ProtocolRegistrationService protocolRegistrationService,
         SingleInstanceService singleInstanceService,
         SystemClock clock,
+        IProtectedFileStore protectedFileStore,
         out FilePickerService filePickerService)
     {
         var settingsStore = new SettingsStore(paths);
         var uploadLogStore = new UploadLogStore(paths);
-        var protectedStore = new ProtectedFileStore(paths);
-        var authService = new AuthService(configuration, protectedStore, clock);
+        var authService = new AuthService(configuration, protectedFileStore, clock);
         var backendApiClient = new BackendApiClient(configuration);
         var uploadService = new UploadService(authService, backendApiClient);
         var watcherService = new ReplayWatcherService();
@@ -272,7 +272,7 @@ public sealed class MainViewModel : ViewModelBase, IAsyncDisposable
             clock,
             settingsStore,
             uploadLogStore,
-            protectedStore,
+            protectedFileStore,
             authService,
             backendApiClient,
             uploadService,

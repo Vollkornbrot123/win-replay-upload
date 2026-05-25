@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ApplicationIcon>..\assets\stringify.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
-    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>$(NoWarn);CA1416</NoWarn>
@@ -17,8 +14,11 @@
     <PackageReference Include="Avalonia" Version="11.3.12" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.12" />
     <PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
+    <!-- Keyring to support linux-->
+    <PackageReference Include="keyring-dotnet" Version="1.2.0" />
     <PackageReference Include="Sentry" Version="6.4.0" />
     <PackageReference Include="SukiUI" Version="6.0.3" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0" />
     <!-- Override the vulnerable transitive version until Avalonia updates its graph. -->
     <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
   </ItemGroup>

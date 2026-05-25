@@ -1,11 +1,10 @@
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using StringifyDesktop.Models;
 
 namespace StringifyDesktop.Services;
 
-public sealed class ProtectedFileStore
+public sealed class ProtectedFileStore : IProtectedFileStore
 {
     private readonly AppPaths paths;
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);

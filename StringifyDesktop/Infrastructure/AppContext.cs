@@ -43,6 +43,7 @@ public sealed class AppContext : IAsyncDisposable
         var protocolRegistrationService = new ProtocolRegistrationService(configuration);
         var trayService = new TrayService(paths);
         var mainWindowCoordinator = new MainWindowCoordinator(trayService, uiDispatcher);
+        var protectedFileStore = ProtectedFileStoreFactory.Create(paths);
         var viewModel = MainViewModel.Create(
             configuration,
             paths,
@@ -50,6 +51,7 @@ public sealed class AppContext : IAsyncDisposable
             protocolRegistrationService,
             singleInstanceService,
             clock,
+            protectedFileStore,
             out var filePickerService);
 
         viewModel.BringToFrontRequested += (_, _) => mainWindowCoordinator.ShowWindow();

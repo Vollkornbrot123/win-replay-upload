@@ -32,7 +32,7 @@ public sealed class MainViewModelTests
             var clock = new SystemClock();
             var settingsStore = new SettingsStore(paths);
             var uploadLogStore = new UploadLogStore(paths);
-            var protectedFileStore = new ProtectedFileStore(paths);
+            var protectedFileStore = new TestProtectedFileStore();
 
             await settingsStore.InitializeAsync();
             await uploadLogStore.InitializeAsync();
@@ -119,7 +119,7 @@ public sealed class MainViewModelTests
             var clock = new SystemClock();
             var settingsStore = new SettingsStore(paths);
             var uploadLogStore = new UploadLogStore(paths);
-            var protectedFileStore = new ProtectedFileStore(paths);
+            var protectedFileStore = new TestProtectedFileStore();
 
             await settingsStore.InitializeAsync();
             await settingsStore.UpdateAsync(deleteAfterUploadEnabled: true);

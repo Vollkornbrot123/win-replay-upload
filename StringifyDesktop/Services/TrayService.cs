@@ -1,53 +1,62 @@
-using System.Drawing;
-using Avalonia.Platform;
-using Avalonia.Platform.Storage;
-using Forms = System.Windows.Forms;
+using Avalonia;
+using Avalonia.Controls;
+using StringifyDesktop.Commands;
 
 namespace StringifyDesktop.Services;
 
 public sealed class TrayService : IDisposable
 {
-    private readonly Forms.NotifyIcon notifyIcon;
-    private readonly Icon icon;
+    private readonly TrayIcon trayIcon;
+    
+    public event EventHandler? OpenRequested;
+    public event EventHandler? QuitRequested;
 
     public TrayService(AppPaths paths)
     {
-        using var stream = paths.OpenAppIconStream();
-        icon = new Icon(stream);
-
-        var menu = new Forms.ContextMenuStrip();
-        menu.Items.Add("Open Stringify Desktop", null, (_, _) => OpenRequested?.Invoke(this, EventArgs.Empty));
-        menu.Items.Add(new Forms.ToolStripSeparator());
-        menu.Items.Add("Quit", null, (_, _) => QuitRequested?.Invoke(this, EventArgs.Empty));
-
-        notifyIcon = new Forms.NotifyIcon
-        {
-            Icon = icon,
-            Text = "Stringify Desktop",
-            Visible = true,
-            ContextMenuStrip = menu
-        };
-
-        notifyIcon.DoubleClick += (_, _) => OpenRequested?.Invoke(this, EventArgs.Empty);
+        trayIcon = CreateTray(paths);
     }
 
-    public event EventHandler? OpenRequested;
+    private TrayIcon CreateTray(AppPaths paths)
+    {
+        using var stream = paths.OpenAppIconStream();
+        var windowIcon = new WindowIcon(stream);
+        var openCommand = new RelayCommand(() => OpenRequested?.Invoke(this, EventArgs.Empty));
+        var quitCommand = new RelayCommand(() => QuitRequested?.Invoke(this, EventArgs.Empty));
 
-    public event EventHandler? QuitRequested;
+        var menu = new NativeMenu();
+        menu.Items.Add(new NativeMenuItem
+        {
+            Header = "Open Stringify Desktop",
+            Command = openCommand
+        });
+        menu.Items.Add(new NativeMenuItemSeparator());
+        menu.Items.Add(new NativeMenuItem
+        {
+            Header = "Quit",
+            Command = quitCommand
+        });
+
+        var trayIconInstance = new TrayIcon
+        {
+            Icon = windowIcon,
+            ToolTipText = "Stringify Desktop",
+            Command = openCommand,
+            Menu = menu
+        };
+        
+        TrayIcon.SetIcons(Application.Current ?? throw new InvalidOperationException("Application is not initialized.")
+            ,[trayIconInstance]);
+
+        return trayIconInstance;
+    }
 
     public void ShowSyncingNotification()
     {
-        notifyIcon.ShowBalloonTip(
-            2500,
-            "Still syncing from the tray",
-            "Use the tray icon to reopen the uploader or quit it completely.",
-            Forms.ToolTipIcon.Info);
+        trayIcon.ToolTipText = "Still syncing from the tray";;
     }
 
     public void Dispose()
     {
-        notifyIcon.Visible = false;
-        notifyIcon.Dispose();
-        icon.Dispose();
+        trayIcon.Dispose();
     }
 }

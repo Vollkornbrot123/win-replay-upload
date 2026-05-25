@@ -13,14 +13,14 @@ public sealed class AuthService : IAccessTokenSource
     private const int CodeMaxAgeMinutes = 10;
     private static readonly TimeSpan RefreshSkew = TimeSpan.FromMinutes(1);
     private readonly AppConfiguration configuration;
-    private readonly ProtectedFileStore protectedFileStore;
+    private readonly IProtectedFileStore protectedFileStore;
     private readonly SystemClock clock;
     private readonly HttpClient httpClient;
     private OAuthSession? currentSession;
 
     public AuthService(
         AppConfiguration configuration,
-        ProtectedFileStore protectedFileStore,
+        IProtectedFileStore protectedFileStore,
         SystemClock clock,
         HttpClient? httpClient = null)
     {
